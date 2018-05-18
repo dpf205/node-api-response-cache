@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
 
-// request data from API
+// request data from API and display
 app.get('/api', function (req, res) {
     const options = {
         method: 'GET',
@@ -41,22 +41,22 @@ app.get('/api', function (req, res) {
 });
 
 
-app.get('/', function (req, res) {
-
-    const {name} = req.query;
-    cacheService(name, age => {
-
-        res.end(age)
-    })
+app.get('/',  (req, res) => {
+    res.send('<h1>home route</h1>')
 });
 
+app.get('/findimage:productId', (req, res) => {
+    let productId = req.params.productId;
+
+
+});
 
 app.get('/seed', (req, res) => {
     seedDB();
     res.send('data saved from API')
 });
 
-app.get('/show', (req, res) => {
+app.get('/linkview', (req, res) => {
     Image.find({}, (err, data) => {
 
         if (err) throw err;

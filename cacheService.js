@@ -1,5 +1,5 @@
 'use strict';
-const client = require('./cache-config');
+
 const TestData = require('./models/data');
 const mongoose = require('mongoose');
 
@@ -45,7 +45,7 @@ const mongoose = require('mongoose');
 
 // TODO: 1) Check the cache for data,
 // TODO: 2) If data is present in cache, return it to client
-// TODO: 3) If data is absent in cache, request if from API and save it to cache and to the DB
+// TODO: 3) If data is absent in cache, request it from API and save it to cache and to the DB
 
 const cacheService = () => {
 
