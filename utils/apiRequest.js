@@ -1,3 +1,5 @@
+'use strict'
+
 const mongoose = require('mongoose');
 const Image = require('../models/data.js');
 const requestPromise = require('request-promise');
@@ -5,7 +7,7 @@ const requestPromise = require('request-promise');
 const mockAPI = 'https://jsonplaceholder.typicode.com/photos';
 
 
-const seedDB = () => {
+const apiRequest = () => {
     const options = {
         method: 'GET',
         uri: mockAPI,
@@ -27,4 +29,4 @@ const seedDB = () => {
 };
 
 
-module.exports = seedDB;
+module.exports = apiRequest;

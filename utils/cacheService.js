@@ -1,6 +1,6 @@
 'use strict';
 
-const TestData = require('./models/data');
+const TestData = require('../models/data');
 const mongoose = require('mongoose');
 
 // const ages = {

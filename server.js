@@ -4,23 +4,51 @@ const express = require('express');
 const app = express();
 let port = process.env.PORT || 8080;
 
-const cacheService = require('./cacheService');
+const cacheService = require('./utils/cacheService');
 
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 // MongoDB Config/Utils
 const mongoose = require('mongoose');
-const MLabConnectionEndpoint = 'mongodb://admin:password@ds123770.mlab.com:23770/node-api-response-cache';
+const MLabConnect = 'mongodb://admin:password@ds133136.mlab.com:33136/node-api-response-cache';
 const Image = require('./models/data');
-const seedDB = require('./utils/seedDB');
-
+const apiRequest = require('./utils/apiRequest');
+const documentCount = require('./utils/documentCount');
 
 // middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
+
+app.get('/', (req, res) => {
+
+    let testQuery = 'accu'; // full or partial  match
+    let responseDataLimit = 1;
+
+// check the db, if you dont find the info, hit the api, and save the response to the db
+    Image.find({'title': {'$regex': testQuery, '$options': ['i', 'm']}}, (err, data) => {
+        if (err) {
+            res.send(`data not found ${err}`);
+        }
+        else if (documentCount(req, res) === false) {
+            apiRequest();
+            console.log(`\n the payload: \n ${data} `);
+            res.end();
+        } else {
+            res.send(`API response should contain data:  \n\n ${data}`);
+        }
+
+    })
+        .limit(responseDataLimit)
+        .exec((err, data) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log(data)
+        });
+});
 
 // request data from API and display
 app.get('/api', function (req, res) {
@@ -35,35 +63,36 @@ app.get('/api', function (req, res) {
             res.send(response)
         })
         .catch((err) => {
-            console.log(err)
-
+            console.log(err);
         })
 });
 
 
-app.get('/',  (req, res) => {
-    res.send('<h1>home route</h1>')
+app.get('/display-data', (req, res) => {
+
+    let limitResponse = 1;
+    Image.find()
+        .limit(limitResponse)
+        .exec((err, data) => {
+            if (err) {
+                console.log(err);
+            } else if (data)
+                console.log(data)
+
+            res.send(`retrieved ${limitResponse} images`);
+        });
+
 });
 
-app.get('/findimage:productId', (req, res) => {
-    let productId = req.params.productId;
-
-
-});
 
 app.get('/seed', (req, res) => {
-    seedDB();
-    res.send('data saved from API')
+    apiRequest();
+    res.end('API response saved to DB')
 });
 
-app.get('/linkview', (req, res) => {
-    Image.find({}, (err, data) => {
 
-        if (err) throw err;
-
-        console.log(data);
-        res.send('works!');
-    })
+app.get('/doc-count', (req, res) => {
+    documentCount(req, res); // curried request and response objects
 });
 
 
@@ -72,7 +101,7 @@ app.listen(port, () => {
     mongoose.Promise = global.Promise;
 
     // connect to MLab MongoDB instance
-    mongoose.connect(MLabConnectionEndpoint)
+    mongoose.connect(MLabConnect)
         .then(() => console.log('connected MLab MongoDB'))
         .catch((err) => console.error(err));
 
