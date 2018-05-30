@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
 const mongoose = require('mongoose');
 const Image = require('../models/data.js');
 const requestPromise = require('request-promise');
 
-const mockAPI = 'https://jsonplaceholder.typicode.com/photos';
+const mockAPI = 'https://jsonplaceholder.typicode.com/photos'; // response: 5,000 objects
 
 
 const apiRequest = () => {

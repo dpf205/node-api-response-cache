@@ -24,20 +24,22 @@ app.use(cors());
 
 app.get('/', (req, res) => {
 
+    let Model = Image;
+
     let testQuery = 'accu'; // full or partial  match
     let responseDataLimit = 1;
 
 // check the db, if you dont find the info, hit the api, and save the response to the db
-    Image.find({'title': {'$regex': testQuery, '$options': ['i', 'm']}}, (err, data) => {
+    Model.find({'title': {'$regex': testQuery, '$options': ['i', 'm']}}, (err, data) => {
         if (err) {
-            res.send(`data not found ${err}`);
+            console.log(`\n Error message: ${err} \n`);
         }
-        else if (documentCount(req, res) === false) {
+        else if (documentCount(req, res, testQuery) === false) {
             apiRequest();
             console.log(`\n the payload: \n ${data} `);
-            res.end();
+
         } else {
-            res.send(`API response should contain data:  \n\n ${data}`);
+            console.log(`API response should contain data: \n\n ${data}`);
         }
 
     })
